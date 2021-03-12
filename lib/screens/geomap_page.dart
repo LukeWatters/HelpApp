@@ -60,7 +60,7 @@ class _MyMapState extends State<MyMap> {
     );
     return Scaffold(
         appBar: AppBar(
-          title: Text("Group users location" ?? "null"),
+          title: Text(widget.name ?? "Group users location"),
           backgroundColor: Colors.black87,
         ),
         body: _loading
