@@ -6,7 +6,7 @@ import 'package:testapp/helper/constants.dart';
 
 class DatabaseService {
   final String uid;
-  String groupId;
+  final String groupId;
   DatabaseService({this.uid, this.groupId});
 
   // Collection reference
@@ -104,27 +104,35 @@ class DatabaseService {
   double lat;
   double longi;
   List<String> mylocation;
-  savelocation() async {
+  savelocation(String groupId, String uid) async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
     lat = position.latitude;
     longi = position.longitude;
     mylocation = [lat.toString(), longi.toString()];
-    setlocation(mylocation, uid, groupId);
+    setlocation(mylocation, groupId, uid);
   }
 
 //save user location in firestore
-  setlocation(List m, String uid, String groupId) {
+  setlocation(List m, String groupId, String uid) {
     Map<String, dynamic> locationmap = {
       "Location": m,
       "isSafe": true,
       "user": uid,
       "groups": groupId
     };
+    // FirebaseFirestore.instance
+    //     .collection('user locations')
+    //     .doc("location")
+    //     .set(locationmap);
+
     FirebaseFirestore.instance
-        .collection('user locations')
-        .doc("location")
-        .set(locationmap);
+        .collection('groups')
+        .doc(groupId)
+        .collection('user group locations')
+        .add(locationmap);
+    print(groupId);
+    print(uid);
   }
 
   // get user data

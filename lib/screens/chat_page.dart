@@ -9,10 +9,9 @@ class ChatPage extends StatefulWidget {
   final String groupId;
   final String userName;
   final String groupName;
+  final String uid;
 
-  bool isWriting = false;
-
-  ChatPage({this.groupId, this.userName, this.groupName});
+  ChatPage({this.groupId, this.userName, this.groupName, this.uid});
 
   @override
   _ChatPageState createState() => _ChatPageState();
