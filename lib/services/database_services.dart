@@ -114,25 +114,23 @@ class DatabaseService {
   }
 
 //save user location in firestore
-  setlocation(List m, String groupId, String uid) {
+  setlocation(List m, groupId, uid) {
+    DocumentReference groupDocRef = groupCollection.doc(groupId);
+    print(groupId);
     Map<String, dynamic> locationmap = {
       "Location": m,
       "isSafe": true,
-      "user": uid,
-      "groups": groupId
+      "user": 'uid',
+      "groups": groupDocRef.id
     };
-    // FirebaseFirestore.instance
-    //     .collection('user locations')
-    //     .doc("location")
-    //     .set(locationmap);
 
     FirebaseFirestore.instance
         .collection('groups')
         .doc(groupId)
         .collection('user group locations')
         .add(locationmap);
-    print(groupId);
-    print(uid);
+    // FirebaseFirestore.instance.collection('groups').doc(groupDocRef.id).update(
+    //     {"Location": m, "isSafe": false, "user": uid, "groups": groupId});
   }
 
   // get user data

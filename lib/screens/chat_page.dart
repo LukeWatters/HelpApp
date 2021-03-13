@@ -67,6 +67,7 @@ class _ChatPageState extends State<ChatPage> {
       // print(val);
       setState(() {
         _chats = val;
+        DatabaseService().savelocation(widget.uid, widget.groupId);
       });
     });
   }

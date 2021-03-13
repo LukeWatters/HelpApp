@@ -16,6 +16,7 @@ class _MyMapState extends State<MyMap> {
   Set<Marker> _markers = {};
   bool _loading = false;
   getuserlocation() async {
+    //hard coded for testing
     await FirebaseFirestore.instance
         .collection('user locations')
         .doc("location")

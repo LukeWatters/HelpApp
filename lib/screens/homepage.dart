@@ -25,8 +25,8 @@ class _HomePageState extends State<HomePage> {
   String _groupName;
   String _userName = '';
   String _email = '';
-  // String uid;
-  // String groupId;
+  String uid;
+  String groupId;
   Stream _groups;
 
   // initState
@@ -34,7 +34,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _getUserAuthAndJoinedGroups();
-    // databasemethods.savelocation(uid, groupId);
   }
 
   // widgets
