@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:testapp/helper/constants.dart';
+import 'package:geolocator/geolocator.dart' as geo;
+import 'package:location/location.dart';
 
 class DatabaseService {
   final String uid;
@@ -104,24 +104,25 @@ class DatabaseService {
   double lat;
   double longi;
   List<String> mylocation;
-  savelocation(String groupId, String uid) async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.bestForNavigation);
+  savelocation() async {
+    geo.Position position = await geo.Geolocator.getCurrentPosition(
+        desiredAccuracy: geo.LocationAccuracy.bestForNavigation);
     lat = position.latitude;
     longi = position.longitude;
     mylocation = [lat.toString(), longi.toString()];
+    print(uid);
+    print(groupId);
     setlocation(mylocation, groupId, uid);
   }
 
 //save user location in firestore
-  setlocation(List m, groupId, uid) {
-    DocumentReference groupDocRef = groupCollection.doc(groupId);
+  setlocation(List coords, String groupId, String uid) {
     print(groupId);
     Map<String, dynamic> locationmap = {
-      "Location": m,
+      "Location": coords,
       "isSafe": true,
-      "user": 'uid',
-      "groups": groupDocRef.id
+      "user": uid,
+      "groups": groupId
     };
 
     FirebaseFirestore.instance
@@ -178,10 +179,23 @@ class DatabaseService {
         .get();
   }
 
+  searchByUserName(String userName) {
+    return FirebaseFirestore.instance
+        .collection("users")
+        .where('fullName', isEqualTo: userName)
+        .get();
+  }
+
 //   raiseAlert(isSafe){
 //     FirebaseFirestore.instance
 //     .collection("user locations")
 //     .doc('location')
 //     .update();
 //   }
+  raiseAlert() {
+    DocumentReference groupDocRef = groupCollection.doc(groupId);
+    DocumentReference userDocRef = userCollection.doc(uid);
+    FirebaseFirestore.instance.collection('user locations').doc("test").update(
+        {"isSafe": false, "user": userDocRef.id, "group": groupDocRef.id});
+  }
 }

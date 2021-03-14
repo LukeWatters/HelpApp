@@ -3,18 +3,13 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:testapp/helper/constants.dart';
+import 'package:testapp/services/database_services.dart';
 
 class MapExample extends StatefulWidget {
-  MapExample({Key key, this.title}) : super(key: key);
-  final String title;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  CollectionReference userLocation =
-      FirebaseFirestore.instance.collection('user location');
-
   @override
   _MyMapExample createState() => _MyMapExample();
 }
@@ -92,16 +87,6 @@ class _MyMapExample extends State<MapExample> {
     }
   }
 
-  setlocation(List m) {
-    Map<String, dynamic> locationmap = {
-      "Location": m,
-    };
-    FirebaseFirestore.instance
-        .collection('user locations')
-        .doc(Constants.MyName)
-        .set(locationmap);
-  }
-
   @override
   void dispose() {
     if (_locationSubscription != null) {
@@ -137,7 +122,7 @@ class _MyMapExample extends State<MapExample> {
               backgroundColor: Colors.amber,
               child: Icon(Icons.pin_drop),
               onPressed: () {
-                // addMarker(newLocalData);
+                // savelocation();
               },
             ),
             FloatingActionButton(
@@ -145,6 +130,7 @@ class _MyMapExample extends State<MapExample> {
               child: Icon(Icons.warning_sharp),
               onPressed: () {
                 print("hello");
+                DatabaseService().raiseAlert();
               },
             )
           ],

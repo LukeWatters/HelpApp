@@ -67,8 +67,8 @@ class _ChatPageState extends State<ChatPage> {
       // print(val);
       setState(() {
         _chats = val;
-        DatabaseService().savelocation(widget.uid, widget.groupId);
       });
+      DatabaseService().savelocation();
     });
   }
 
@@ -84,6 +84,7 @@ class _ChatPageState extends State<ChatPage> {
             onPressed: () {
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => MyMap()));
+              DatabaseService().savelocation();
             },
           )
         ],
