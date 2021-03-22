@@ -68,7 +68,6 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         _chats = val;
       });
-      DatabaseService().savelocation();
     });
   }
 

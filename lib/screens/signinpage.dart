@@ -84,7 +84,7 @@ class _SignInPageState extends State<SignInPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Text("Create or Join Groups",
+                      Text("Help App",
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 40.0,

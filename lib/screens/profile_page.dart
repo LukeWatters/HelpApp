@@ -51,6 +51,14 @@ class ProfilePage extends StatelessWidget {
               title: Text('Profile'),
             ),
             ListTile(
+              selected: true,
+              onTap: () {},
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+              leading: Icon(Icons.account_circle),
+              title: Text('Image Picker'),
+            ),
+            ListTile(
               onTap: () async {
                 await _auth.signOut();
                 Navigator.of(context).pushAndRemoveUntil(

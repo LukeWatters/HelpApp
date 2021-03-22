@@ -38,8 +38,14 @@ class _MyMapExample extends State<MapExample> {
   String groupId;
   Stream _groups;
 
+  @override
+  void initState() {
+    super.initState();
+    _getUserAuthAndJoinedGroups();
+  }
+
   static final CameraPosition initialLocation = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
+    target: LatLng(53.3498, 6.2603),
     zoom: 14.4746,
   );
 
@@ -124,6 +130,7 @@ class _MyMapExample extends State<MapExample> {
       setState(() {
         _groups = snapshots;
       });
+      // DatabaseService().savelocation();
     });
   }
 
@@ -163,7 +170,7 @@ class _MyMapExample extends State<MapExample> {
               backgroundColor: Colors.amber,
               child: Icon(Icons.pin_drop),
               onPressed: () {
-                DatabaseService().storelocation();
+                DatabaseService().storelocation(_userName);
               },
             ),
             FloatingActionButton(
