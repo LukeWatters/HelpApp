@@ -50,6 +50,13 @@ class DatabaseService {
     return await userDocRef.update({
       'groups': FieldValue.arrayUnion([groupDocRef.id + '_' + groupName])
     });
+
+    // ignore: dead_code
+    FirebaseFirestore.instance
+        .collection('groups')
+        .doc(groupId)
+        .collection('user locations')
+        .add({"isSafe": false, "user": uid, "group": groupId});
   }
 
   // toggling the user group join
@@ -110,8 +117,6 @@ class DatabaseService {
     lat = position.latitude;
     longi = position.longitude;
     mylocation = [lat.toString(), longi.toString()];
-    print(uid);
-    print(groupId);
     setlocation(mylocation, groupId, uid);
   }
 
@@ -130,8 +135,38 @@ class DatabaseService {
         .doc(groupId)
         .collection('user group locations')
         .add(locationmap);
+
+    FirebaseFirestore.instance
+        .collection('groups')
+        .doc(groupId)
+        .collection('user locations')
+        .add({"isSafe": false, "user": uid, "group": groupId});
     // FirebaseFirestore.instance.collection('groups').doc(groupDocRef.id).update(
     //     {"Location": m, "isSafe": false, "user": uid, "groups": groupId});
+  }
+
+  // save flagged locations to marked location collection
+  storelocation() async {
+    geo.Position position = await geo.Geolocator.getCurrentPosition(
+        desiredAccuracy: geo.LocationAccuracy.high);
+    lat = position.latitude;
+    longi = position.longitude;
+    mylocation = [lat.toString(), longi.toString()];
+    storelocationToDb(mylocation);
+  }
+
+  storelocationToDb(
+    List mylocation,
+  ) {
+    Map<String, dynamic> markedlocationmap = {
+      "Location": mylocation,
+      "Date": "Date",
+      "Time": "Time"
+    };
+
+    FirebaseFirestore.instance
+        .collection("Marked locations")
+        .add(markedlocationmap);
   }
 
   // get user data
@@ -186,16 +221,10 @@ class DatabaseService {
         .get();
   }
 
-//   raiseAlert(isSafe){
-//     FirebaseFirestore.instance
-//     .collection("user locations")
-//     .doc('location')
-//     .update();
-//   }
-  raiseAlert() {
-    DocumentReference groupDocRef = groupCollection.doc(groupId);
-    DocumentReference userDocRef = userCollection.doc(uid);
-    FirebaseFirestore.instance.collection('user locations').doc("test").update(
-        {"isSafe": false, "user": userDocRef.id, "group": groupDocRef.id});
+  raiseAlert(String groupId, String uid) {
+    FirebaseFirestore.instance
+        .collection('user locations')
+        .doc("test")
+        .update({"isSafe": false, "user": uid, "group": groupId});
   }
 }

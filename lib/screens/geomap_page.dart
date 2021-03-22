@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:testapp/services/database_services.dart';
 
 class MyMap extends StatefulWidget {
   final name;
@@ -18,8 +19,8 @@ class _MyMapState extends State<MyMap> {
   getuserlocation() async {
     //hard coded for testing
     await FirebaseFirestore.instance
-        .collection('user locations')
-        .doc("location")
+        .collection('Marked locations')
+        .doc()
         .get()
         .then((value) {
       lat = double.parse(value.data()['Location'][0]);
@@ -45,6 +46,7 @@ class _MyMapState extends State<MyMap> {
       _loading = true;
     });
     getuserlocation();
+    DatabaseService().savelocation();
   }
 
   @override

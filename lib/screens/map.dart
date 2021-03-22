@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:testapp/helper/constants.dart';
+import 'package:testapp/helper/authenticate.dart';
+import 'package:testapp/helper/helperfunction.dart';
+import 'package:testapp/screens/profile_page.dart';
+import 'package:testapp/services/auth_services.dart';
 import 'package:testapp/services/database_services.dart';
 
 class MapExample extends StatefulWidget {
@@ -23,10 +27,23 @@ class _MyMapExample extends State<MapExample> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   GoogleMapController _controller;
 
+  DatabaseService databasemethods = new DatabaseService();
+  // data
+  final AuthService _auth = AuthService();
+  User _user;
+  String _groupName;
+  String _userName = '';
+  String _email = '';
+  String uid;
+  String groupId;
+  Stream _groups;
+
   static final CameraPosition initialLocation = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
   );
+
+  _MyMapExample();
 
   Future<Uint8List> getMarker() async {
     ByteData byteData =
@@ -95,9 +112,33 @@ class _MyMapExample extends State<MapExample> {
     super.dispose();
   }
 
+  _getUserAuthAndJoinedGroups() async {
+    _user = await FirebaseAuth.instance.currentUser;
+    await HelperFunction.getuserNameSharedPreference().then((value) {
+      setState(() {
+        _userName = value;
+      });
+    });
+    DatabaseService(uid: _user.uid).getUserGroups().then((snapshots) {
+      // print(snapshots);
+      setState(() {
+        _groups = snapshots;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.black87,
+        title: Text('Map View',
+            style: TextStyle(
+                fontSize: 27.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white)),
+      ),
       body: GoogleMap(
         mapType: MapType.hybrid,
         initialCameraPosition: initialLocation,
@@ -122,15 +163,14 @@ class _MyMapExample extends State<MapExample> {
               backgroundColor: Colors.amber,
               child: Icon(Icons.pin_drop),
               onPressed: () {
-                // savelocation();
+                DatabaseService().storelocation();
               },
             ),
             FloatingActionButton(
               backgroundColor: Colors.red,
               child: Icon(Icons.warning_sharp),
               onPressed: () {
-                print("hello");
-                DatabaseService().raiseAlert();
+                DatabaseService().raiseAlert(groupId, uid);
               },
             )
           ],

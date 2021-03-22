@@ -63,7 +63,6 @@ class _HomePageState extends State<HomePage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data['groups'] != null) {
-            // print(snapshot.data['groups'].length);
             if (snapshot.data['groups'].length != 0) {
               return ListView.builder(
                   itemCount: snapshot.data['groups'].length,
@@ -122,13 +121,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _popupDialog(BuildContext context) {
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = TextButton(
       child: Text("Cancel"),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
-    Widget createButton = FlatButton(
+    Widget createButton = TextButton(
       child: Text("Create"),
       onPressed: () async {
         if (_groupName != null) {

@@ -55,6 +55,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _showScaffold(String message) {
+    // ignore: deprecated_member_use
     _scaffoldKey.currentState.showSnackBar(SnackBar(
       backgroundColor: Colors.blueAccent,
       duration: Duration(milliseconds: 1500),
@@ -160,13 +161,7 @@ class _SearchPageState extends State<SearchPage> {
                 fontWeight: FontWeight.bold,
                 color: Colors.white)),
       ),
-      body: // isLoading ? Container(
-          //   child: Center(
-          //     child: CircularProgressIndicator(),
-          //   ),
-          // )
-          // :
-          Container(
+      body: Container(
         child: Column(
           children: [
             Container(
