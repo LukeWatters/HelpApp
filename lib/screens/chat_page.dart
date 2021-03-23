@@ -83,7 +83,6 @@ class _ChatPageState extends State<ChatPage> {
             onPressed: () {
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => MyMap()));
-              DatabaseService().savelocation();
             },
           )
         ],

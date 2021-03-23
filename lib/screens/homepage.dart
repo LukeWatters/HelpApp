@@ -25,8 +25,6 @@ class _HomePageState extends State<HomePage> {
   String _groupName;
   String _userName = '';
   String _email = '';
-  String uid;
-  String groupId;
   Stream _groups;
 
   // initState
@@ -95,6 +93,8 @@ class _HomePageState extends State<HomePage> {
     await HelperFunction.getuserNameSharedPreference().then((value) {
       setState(() {
         _userName = value;
+        DatabaseService().savelocation(_user.uid, _userName);
+        print(_userName);
       });
     });
     DatabaseService(uid: _user.uid).getUserGroups().then((snapshots) {

@@ -20,7 +20,7 @@ class _MyMapState extends State<MyMap> {
     //hard coded for testing
     await FirebaseFirestore.instance
         .collection('Marked locations')
-        .doc()
+        .doc("NM6juTub9aZRokNmE1Eb")
         .get()
         .then((value) {
       lat = double.parse(value.data()['Location'][0]);
@@ -46,7 +46,6 @@ class _MyMapState extends State<MyMap> {
       _loading = true;
     });
     getuserlocation();
-    DatabaseService().savelocation();
   }
 
   @override
