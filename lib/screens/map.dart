@@ -2,15 +2,14 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:testapp/helper/authenticate.dart';
 import 'package:testapp/helper/helperfunction.dart';
-import 'package:testapp/screens/profile_page.dart';
-import 'package:testapp/services/auth_services.dart';
+import 'package:testapp/screens/homepage.dart';
 import 'package:testapp/services/database_services.dart';
 
 class MapExample extends StatefulWidget {
@@ -26,17 +25,15 @@ class _MyMapExample extends State<MapExample> {
   final Set<Marker> _markers = {};
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   GoogleMapController _controller;
+  FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
   DatabaseService databasemethods = new DatabaseService();
   // data
-  final AuthService _auth = AuthService();
+
   User _user;
-  String _groupName;
   String _userName = '';
-  String _email = '';
   String uid;
   String groupId;
-  Stream _groups;
 
   @override
   void initState() {
@@ -100,7 +97,7 @@ class _MyMapExample extends State<MapExample> {
                   tilt: 0,
                   zoom: 18.00)));
           updateMarkerAndCircle(newLocalData, imageData);
-          print(newLocalData);
+          _savelocation(newLocalData);
         }
       });
     } on PlatformException catch (e) {
@@ -125,27 +122,59 @@ class _MyMapExample extends State<MapExample> {
         _userName = value;
       });
     });
-    DatabaseService(uid: _user.uid).getUserGroups().then((snapshots) {
-      // print(snapshots);
-      setState(() {
-        _groups = snapshots;
-      });
-      // DatabaseService().savelocation();
-    });
+  }
+
+  double lat;
+  double longi;
+  List<String> mylocation;
+  _savelocation(newLocalData) {
+    lat = newLocalData.latitude;
+    longi = newLocalData.longitude;
+    mylocation = [lat.toString(), longi.toString()];
+    setlocation(mylocation);
+  }
+
+  //save user location in firestore
+  setlocation(List coords) {
+    Map<String, dynamic> locationmap = {
+      "Location": coords,
+      "isSafe": true,
+      "Username": _userName
+    };
+
+    FirebaseFirestore.instance
+        .collection('live location updates')
+        .doc("$_userName " + "location")
+        .set(locationmap);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.black87,
-        title: Text('Map View',
-            style: TextStyle(
-                fontSize: 27.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white)),
-      ),
+          elevation: 0.0,
+          backgroundColor: Colors.black87,
+          centerTitle: true,
+          title: Text('Map View',
+              style: TextStyle(
+                  fontSize: 27.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => HomePage()));
+                    }),
+              ],
+            )
+          ]),
       body: GoogleMap(
         mapType: MapType.hybrid,
         initialCameraPosition: initialLocation,
@@ -171,6 +200,7 @@ class _MyMapExample extends State<MapExample> {
               child: Icon(Icons.pin_drop),
               onPressed: () {
                 DatabaseService().storelocation(_userName);
+                Text("location marked!");
               },
             ),
             FloatingActionButton(

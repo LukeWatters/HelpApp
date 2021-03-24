@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:location/location.dart';
 
@@ -14,6 +16,7 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('users');
   final CollectionReference groupCollection =
       FirebaseFirestore.instance.collection('groups');
+  FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
   // update userdata
   Future updateUserData(String fullName, String email, String password) async {
@@ -38,6 +41,7 @@ class DatabaseService {
       'recentMessage': '',
       'recentMessageSender': ''
     });
+    await FirebaseMessaging.instance.subscribeToTopic('$groupName');
 
     await groupDocRef.update({
       'members': FieldValue.arrayUnion([uid + '_' + userName]),
@@ -102,17 +106,17 @@ class DatabaseService {
   double lat;
   double longi;
   List<String> mylocation;
-  Future savelocation(String groupId, String userName) async {
+  Future savelocation(String userName) async {
     geo.Position position = await geo.Geolocator.getCurrentPosition(
         desiredAccuracy: geo.LocationAccuracy.bestForNavigation);
     lat = position.latitude;
     longi = position.longitude;
     mylocation = [lat.toString(), longi.toString()];
-    setlocation(mylocation, groupId, userName);
+    setlocation(mylocation, userName);
   }
 
 //save user location in firestore
-  setlocation(List coords, String userName, String groupId) {
+  setlocation(List coords, String userName) {
     Map<String, dynamic> locationmap = {
       "Location": coords,
       "isSafe": true,
@@ -121,15 +125,16 @@ class DatabaseService {
     };
 
     FirebaseFirestore.instance
+        .collection('groups')
+        .doc(groupId)
         .collection('user locations')
-        .doc("$groupId " + "location")
-        .set(locationmap);
+        .add(locationmap);
 
     // FirebaseFirestore.instance
     //     .collection('groups')
     //     .doc(groupId)
     //     .collection('user locations')
-    //     .add({"isSafe": false, "user": userDocRef.id, "group": groupDocRef.id});
+    //     .add(locationmap);
   }
 
   // save flagged locations to marked location collection
@@ -151,7 +156,8 @@ class DatabaseService {
 // Saves to the marked locations collection in DB
     FirebaseFirestore.instance
         .collection("Marked locations")
-        .add(markedlocationmap);
+        .doc("$userName's" + " marked locations")
+        .set(markedlocationmap);
   }
 
   // get user data
@@ -206,10 +212,10 @@ class DatabaseService {
         .get();
   }
 
-  raiseAlert(String groupId, String uid) {
+  raiseAlert(String userName, String uid) {
     FirebaseFirestore.instance
-        .collection('user locations')
-        .doc("test")
-        .update({"isSafe": false, "user": uid, "group": groupId});
+        .collection('live location updates')
+        .doc("$userName " + "location")
+        .update({"isSafe": false});
   }
 }

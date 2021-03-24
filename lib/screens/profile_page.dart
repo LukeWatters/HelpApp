@@ -7,6 +7,7 @@ class ProfilePage extends StatelessWidget {
   final String userName;
   final String email;
   final AuthService _auth = AuthService();
+  // final Stream _groups;
 
   ProfilePage({this.userName, this.email});
 
@@ -49,14 +50,6 @@ class ProfilePage extends StatelessWidget {
                   EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
               leading: Icon(Icons.account_circle),
               title: Text('Profile'),
-            ),
-            ListTile(
-              selected: true,
-              onTap: () {},
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-              leading: Icon(Icons.account_circle),
-              title: Text('Image Picker'),
             ),
             ListTile(
               onTap: () async {

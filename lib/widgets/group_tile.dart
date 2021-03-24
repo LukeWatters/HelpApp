@@ -22,7 +22,7 @@ class GroupTile extends StatelessWidget {
                     )));
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 40.0),
+        padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 30.0),
         child: ListTile(
           leading: CircleAvatar(
             radius: 30.0,

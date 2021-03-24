@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +8,11 @@ import 'package:testapp/helper/helperfunction.dart';
 import 'package:testapp/screens/map.dart';
 import 'package:testapp/screens/profile_page.dart';
 import 'package:testapp/screens/search_page.dart';
+import 'package:testapp/screens/settings.dart';
 import 'package:testapp/services/auth_services.dart';
 import 'package:testapp/services/database_services.dart';
 import 'package:testapp/widgets/group_tile.dart';
-
-import 'geomap_page.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -93,8 +95,6 @@ class _HomePageState extends State<HomePage> {
     await HelperFunction.getuserNameSharedPreference().then((value) {
       setState(() {
         _userName = value;
-        DatabaseService().savelocation(_user.uid, _userName);
-        print(_userName);
       });
     });
     DatabaseService(uid: _user.uid).getUserGroups().then((snapshots) {
@@ -222,6 +222,24 @@ class _HomePageState extends State<HomePage> {
                   EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
               leading: Icon(Icons.location_pin),
               title: Text('Location'),
+            ),
+            ListTile(
+              onTap: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => UserSettings()),
+                    (Route<dynamic> route) => false);
+              },
+              selected: true,
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+              leading: Icon(
+                Icons.settings,
+                color: Colors.black87,
+              ),
+              title: Text(
+                'Settings',
+                style: TextStyle(color: Colors.black87),
+              ),
             ),
             ListTile(
               onTap: () async {
