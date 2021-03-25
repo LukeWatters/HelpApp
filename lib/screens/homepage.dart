@@ -21,6 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DatabaseService databasemethods = new DatabaseService();
+
   // data
   final AuthService _auth = AuthService();
   User _user;
@@ -28,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   String _userName = '';
   String _email = '';
   Stream _groups;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   // initState
   @override
@@ -108,6 +110,9 @@ class _HomePageState extends State<HomePage> {
         _email = value;
       });
     });
+    // For testing purposes print the Firebase Messaging token
+    String token = await _firebaseMessaging.getToken();
+    print("Device Token:---->$token");
   }
 
   String _destructureId(String res) {
