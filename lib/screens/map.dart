@@ -34,6 +34,7 @@ class _MyMapExample extends State<MapExample> {
   String _userName = '';
   String uid;
   String groupId;
+  Stream _groups;
 
   @override
   void initState() {
@@ -122,6 +123,12 @@ class _MyMapExample extends State<MapExample> {
         _userName = value;
       });
     });
+    DatabaseService(uid: _user.uid).getUserGroups().then((snapshots) {
+      // print(snapshots);
+      setState(() {
+        _groups = snapshots;
+      });
+    });
   }
 
   double lat;
@@ -138,13 +145,13 @@ class _MyMapExample extends State<MapExample> {
   setlocation(List coords) {
     Map<String, dynamic> locationmap = {
       "Location": coords,
-      "isSafe": true,
-      "Username": _userName
+      "Username": _userName,
+      "Time": DateTime.now(),
     };
 
     FirebaseFirestore.instance
         .collection('live location updates')
-        .doc("$_userName " + "location")
+        .doc("user locations")
         .set(locationmap);
   }
 
@@ -161,7 +168,7 @@ class _MyMapExample extends State<MapExample> {
                   fontWeight: FontWeight.bold,
                   color: Colors.white)),
           actions: [
-            Row(
+            Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 IconButton(
@@ -200,14 +207,15 @@ class _MyMapExample extends State<MapExample> {
               child: Icon(Icons.pin_drop),
               onPressed: () {
                 DatabaseService().storelocation(_userName);
-                Text("location marked!");
+                print("location marked!");
               },
             ),
             FloatingActionButton(
               backgroundColor: Colors.red,
               child: Icon(Icons.warning_sharp),
               onPressed: () {
-                DatabaseService().raiseAlert(groupId, uid);
+                DatabaseService().raiseAlert(_userName);
+                print("alert activated");
               },
             )
           ],

@@ -212,10 +212,12 @@ class DatabaseService {
         .get();
   }
 
-  raiseAlert(String userName, String uid) {
+  raiseAlert(String userName) {
     FirebaseFirestore.instance
-        .collection('live location updates')
+        .collection("live location updates")
         .doc("$userName " + "location")
-        .update({"isSafe": false});
+        .collection("Is Safe")
+        .add({"isSafe": false});
+    // .set({"isSafe": false}, SetOptions(merge: true));
   }
 }
