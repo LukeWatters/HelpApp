@@ -14,6 +14,8 @@ import 'package:testapp/services/database_services.dart';
 import 'package:testapp/widgets/group_tile.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+import 'notification_page.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -257,6 +259,16 @@ class _HomePageState extends State<HomePage> {
                   EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
               leading: Icon(Icons.exit_to_app, color: Colors.red),
               title: Text('Log Out', style: TextStyle(color: Colors.red)),
+            ),
+            ListTile(
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => Application()));
+              },
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+              leading: Icon(Icons.mail, color: Colors.blueAccent),
+              title: Text('Notification'),
             ),
           ],
         ),

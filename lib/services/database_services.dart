@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:geolocator/geolocator.dart' as geo;
-import 'package:location/location.dart';
 
 class DatabaseService {
   final String uid;
@@ -16,41 +13,47 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('users');
   final CollectionReference groupCollection =
       FirebaseFirestore.instance.collection('groups');
-  FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
   // update userdata
   Future updateUserData(String fullName, String email, String password) async {
+    String token = await _messaging.getToken();
     return await userCollection.doc(uid).set({
       'fullName': fullName,
       'email': email,
       'password': password,
       'groups': [],
-      'profilePic': ''
+      'profilePic': '',
+      'token': token,
+      "active group": ''
     });
   }
 
   // create group
   Future createGroup(String userName, String groupName) async {
+    String token = await _messaging.getToken();
     DocumentReference groupDocRef = await groupCollection.add({
       'groupName': groupName,
       'groupIcon': '',
       'admin': userName,
       'members': [],
-      //'messages': ,
+      'tokens': [],
       'groupId': '',
       'recentMessage': '',
       'recentMessageSender': ''
     });
-    await FirebaseMessaging.instance.subscribeToTopic('$groupName');
-
     await groupDocRef.update({
-      'members': FieldValue.arrayUnion([uid + '_' + userName]),
-      'groupId': groupDocRef.id
+      'members': FieldValue.arrayUnion([uid + '__' + userName]),
+      'groupId': groupDocRef.id,
     });
 
     DocumentReference userDocRef = userCollection.doc(uid);
-    return await userDocRef.update({
+    await userDocRef.update({
       'groups': FieldValue.arrayUnion([groupDocRef.id + '_' + groupName])
+    });
+
+    return await groupDocRef.update({
+      'tokens': FieldValue.arrayUnion([token])
     });
   }
 
@@ -59,6 +62,7 @@ class DatabaseService {
       String groupId, String groupName, String userName) async {
     DocumentReference userDocRef = userCollection.doc(uid);
     DocumentSnapshot userDocSnapshot = await userDocRef.get();
+    String token = await _messaging.getToken();
 
     DocumentReference groupDocRef = groupCollection.doc(groupId);
 
@@ -81,6 +85,10 @@ class DatabaseService {
 
       await groupDocRef.update({
         'members': FieldValue.arrayUnion([uid + '_' + userName])
+      });
+
+      await groupDocRef.update({
+        'tokens': FieldValue.arrayUnion([token])
       });
     }
   }
@@ -129,12 +137,6 @@ class DatabaseService {
         .doc(groupId)
         .collection('user locations')
         .add(locationmap);
-
-    // FirebaseFirestore.instance
-    //     .collection('groups')
-    //     .doc(groupId)
-    //     .collection('user locations')
-    //     .add(locationmap);
   }
 
   // save flagged locations to marked location collection

@@ -36,6 +36,9 @@ dependencies:
   bot_toast: ^4.0.0+1
   firebase_messaging: 
   settings_ui: ^0.6.0
+  overlay_support: ^1.2.0
+  http: 
+  flutter_local_notifications: 
   
 
 
