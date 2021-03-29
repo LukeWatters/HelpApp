@@ -12,16 +12,7 @@ class ActiveGroupTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ChatPage(
-                      groupId: groupId,
-                      userName: userName,
-                      groupName: groupName,
-                    )));
-      },
+      onTap: () {},
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 30.0),
         child: ListTile(

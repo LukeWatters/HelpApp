@@ -4,7 +4,6 @@ import 'package:testapp/helper/helperfunction.dart';
 import 'package:testapp/services/auth_services.dart';
 import 'package:testapp/services/database_services.dart';
 import 'package:testapp/widgets/active_group_tile.dart';
-import 'package:testapp/widgets/group_tile.dart';
 
 class ActiveGroup extends StatefulWidget {
   @override
@@ -110,6 +109,8 @@ class _ActiveGroupState extends State<ActiveGroup> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          title: Text("Active group"),
+          centerTitle: true,
           backgroundColor: Colors.black87,
         ),
         body: groupsList());

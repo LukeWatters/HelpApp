@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:testapp/helper/authenticate.dart';
 import 'package:testapp/screens/profile_page.dart';
@@ -19,7 +18,6 @@ class _UserSettingsState extends State<UserSettings> {
   Widget build(BuildContext context) {
     final AuthService _auth = AuthService();
     String _userName = '';
-    User _user;
     String _email = '';
 
     return Scaffold(
