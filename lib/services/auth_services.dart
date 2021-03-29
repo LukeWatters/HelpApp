@@ -10,11 +10,15 @@ class AuthService {
   // create user object based on FirebaseUser
   UserModel _userFromFirebaseUser(User user) {
     if (user != null) {
-      return UserModel(userId: user.uid);
+      return UserModel(
+        uid: user.uid,
+      );
     } else {
       return null;
     }
   }
+
+  Stream<User> get user => _auth.authStateChanges();
 
   // sign in with email and password
   Future signInWithEmailAndPassword(String email, String password) async {
