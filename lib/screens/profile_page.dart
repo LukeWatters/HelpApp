@@ -73,7 +73,7 @@ class ProfilePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Icon(Icons.account_circle,
-                    size: 150.0, color: Colors.grey[700]),
+                    size: 120.0, color: Colors.grey[700]),
                 SizedBox(height: 15.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
